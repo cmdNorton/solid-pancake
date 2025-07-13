@@ -12,7 +12,7 @@ variables:
   patchVersion: $(Build.BuildNumber)
   packageVersion: '$(majorVersion).$(minorVersion).$(patchVersion)'
   branchName: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
-
+  
 steps:
 - script: |
     echo "=== VERSION INFORMATION ==="
@@ -91,18 +91,9 @@ steps:
     publishVstsFeed: 'hello_world/pancake-feed'
     publishPackageMetadata: true
 
-# Email notification - only on sonarqube branch
-- task: EmailReport@1
-  displayName: 'Send email notification'
+# Email notification - configure via Project Settings > Service hooks instead
+- script: |
+    echo "Email notification would be sent here"
+    echo "Configure via Project Settings > Service hooks for automatic notifications"
+  displayName: 'Email notification placeholder'
   condition: eq(variables['branchName'], 'sonarqube')
-  inputs:
-    sendMailConditionConfig: 'Always'
-    subject: 'Pipeline $(Build.DefinitionName) - Build $(Build.BuildNumber) - $(branchName) branch'
-    to: 'ermr.erez@gmail.com'
-    body: |
-      Pipeline Status: $(Agent.JobStatus)
-      Branch: $(branchName)
-      Version: $(packageVersion)
-      Build Number: $(Build.BuildNumber)
-      SonarCloud analysis completed for project solid-pancake.
-      Build logs: $(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)
