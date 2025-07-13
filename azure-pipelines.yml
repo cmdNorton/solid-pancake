@@ -21,5 +21,23 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
+- task: DotNetCoreCLI@2
+  displayName: 'Pack project'
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    configuration: '$(buildConfiguration)'
+    versioningScheme: 'byPrereleaseNumber'
+    majorVersion: '1'
+    minorVersion: '0'
+    patchVersion: '0'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish to Azure Artifacts'
+  inputs:
+    command: 'push'
+    publishVstsFeed: 'YOUR_PROJECT_NAME/YOUR_FEED_NAME'
+    publishPackageMetadata: true
+
 - script: echo "Version increment logic goes here"
   displayName: 'Print version to console'
