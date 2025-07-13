@@ -12,7 +12,7 @@ variables:
   patchVersion: $(Build.BuildNumber)
   packageVersion: '$(majorVersion).$(minorVersion).$(patchVersion)'
   branchName: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
-
+  
 steps:
 - script: |
     echo "=== VERSION INFORMATION ==="
@@ -43,7 +43,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
 # SonarCloud flow for feature branches - prepare, build, analyze
-- task: SonarCloudPrepare@1
+- task: SonarCloudPrepare@2
   displayName: 'Prepare SonarCloud analysis'
   condition: eq(variables['branchName'], 'sonarqube')
   inputs:
@@ -62,13 +62,14 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
-- task: SonarCloudAnalyze@1
+- task: SonarCloudAnalyze@2
   displayName: 'Run SonarCloud analysis'
   condition: eq(variables['branchName'], 'sonarqube')
 
-- task: SonarCloudPublish@1
+- task: SonarCloudPublish@2
   displayName: 'Publish SonarCloud results'
   condition: eq(variables['branchName'], 'sonarqube')
+  continueOnError: true
   inputs:
     pollingTimeoutSec: '300'
 
