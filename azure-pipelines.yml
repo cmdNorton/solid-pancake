@@ -33,24 +33,34 @@ steps:
     command: 'restore'
     projects: '**/*.csproj'
 
+# Build for main branch (normal flow)
 - task: DotNetCoreCLI@2
-  displayName: 'Build project'
+  displayName: 'Build project (main branch)'
+  condition: eq(variables['branchName'], 'main')
   inputs:
     command: 'build'
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
-# SonarCloud tasks - only run on sonarqube branch
+# SonarCloud flow for feature branches - prepare, build, analyze
 - task: SonarCloudPrepare@1
   displayName: 'Prepare SonarCloud analysis'
   condition: eq(variables['branchName'], 'sonarqube')
   inputs:
-    SonarCloud: 'cmdNorton_solid-pancake'
+    SonarCloud: 'SonarCloud-Connection'
     organization: 'cmdnorton'
     scannerMode: 'MSBuild'
     projectKey: 'cmdNorton_solid-pancake'
     projectName: 'solid-pancake'
     projectVersion: '$(packageVersion)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build project (with SonarCloud analysis)'
+  condition: eq(variables['branchName'], 'sonarqube')
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: SonarCloudAnalyze@1
   displayName: 'Run SonarCloud analysis'
