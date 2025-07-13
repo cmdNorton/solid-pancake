@@ -1,5 +1,6 @@
 trigger:
 - main
+- sonarqube
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -10,16 +11,19 @@ variables:
   minorVersion: '0'
   patchVersion: $(Build.BuildNumber)
   packageVersion: '$(majorVersion).$(minorVersion).$(patchVersion)'
+  branchName: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
 
 steps:
 - script: |
     echo "=== VERSION INFORMATION ==="
+    echo "Branch Name: $(branchName)"
     echo "Major Version: $(majorVersion)"
     echo "Minor Version: $(minorVersion)"
     echo "Patch Version: $(patchVersion)"
     echo "Full Package Version: $(packageVersion)"
     echo "Build Number: $(Build.BuildNumber)"
     echo "Build ID: $(Build.BuildId)"
+    echo "Source Branch: $(Build.SourceBranch)"
     echo "=========================="
   displayName: 'Print version information to console'
 
@@ -36,8 +40,32 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
+# SonarCloud tasks - only run on sonarqube branch
+- task: SonarCloudPrepare@1
+  displayName: 'Prepare SonarCloud analysis'
+  condition: eq(variables['branchName'], 'sonarqube')
+  inputs:
+    SonarCloud: 'SonarCloud-Connection'
+    organization: 'cmdnorton'
+    scannerMode: 'MSBuild'
+    projectKey: 'cmdNorton_solid-pancake'
+    projectName: 'solid-pancake'
+    projectVersion: '$(packageVersion)'
+
+- task: SonarCloudAnalyze@1
+  displayName: 'Run SonarCloud analysis'
+  condition: eq(variables['branchName'], 'sonarqube')
+
+- task: SonarCloudPublish@1
+  displayName: 'Publish SonarCloud results'
+  condition: eq(variables['branchName'], 'sonarqube')
+  inputs:
+    pollingTimeoutSec: '300'
+
+# Pack with branch-specific naming
 - task: DotNetCoreCLI@2
-  displayName: 'Pack project'
+  displayName: 'Pack project (main branch)'
+  condition: eq(variables['branchName'], 'main')
   inputs:
     command: 'pack'
     packagesToPack: '**/*.csproj'
@@ -46,8 +74,35 @@ steps:
     versionEnvVar: 'packageVersion'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Pack project (feature branch with branch name)'
+  condition: ne(variables['branchName'], 'main')
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    configuration: '$(buildConfiguration)'
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'packageVersion'
+    buildProperties: 'PackageId=azure_devops_git_$(branchName)'
+
+- task: DotNetCoreCLI@2
   displayName: 'Publish to Azure Artifacts'
   inputs:
     command: 'push'
     publishVstsFeed: 'hello_world/pancake-feed'
     publishPackageMetadata: true
+
+# Email notification - only on sonarqube branch
+- task: EmailReport@1
+  displayName: 'Send email notification'
+  condition: eq(variables['branchName'], 'sonarqube')
+  inputs:
+    sendMailConditionConfig: 'Always'
+    subject: 'Pipeline $(Build.DefinitionName) - Build $(Build.BuildNumber) - $(branchName) branch'
+    to: 'your-email@example.com'
+    body: |
+      Pipeline Status: $(Agent.JobStatus)
+      Branch: $(branchName)
+      Version: $(packageVersion)
+      Build Number: $(Build.BuildNumber)
+      SonarCloud analysis completed for project solid-pancake.
+      Build logs: $(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)
