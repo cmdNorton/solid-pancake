@@ -36,7 +36,7 @@ steps:
   displayName: 'Publish to Azure Artifacts'
   inputs:
     command: 'push'
-    publishVstsFeed: 'YOUR_PROJECT_NAME/YOUR_FEED_NAME'
+    publishVstsFeed: 'hello_world/pancake-feed'
     publishPackageMetadata: true
 
 - script: echo "Version increment logic goes here"
