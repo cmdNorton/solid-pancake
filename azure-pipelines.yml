@@ -6,8 +6,23 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  majorVersion: '1'
+  minorVersion: '0'
+  patchVersion: $(Build.BuildNumber)
+  packageVersion: '$(majorVersion).$(minorVersion).$(patchVersion)'
 
 steps:
+- script: |
+    echo "=== VERSION INFORMATION ==="
+    echo "Major Version: $(majorVersion)"
+    echo "Minor Version: $(minorVersion)"
+    echo "Patch Version: $(patchVersion)"
+    echo "Full Package Version: $(packageVersion)"
+    echo "Build Number: $(Build.BuildNumber)"
+    echo "Build ID: $(Build.BuildId)"
+    echo "=========================="
+  displayName: 'Print version information to console'
+
 - task: DotNetCoreCLI@2
   displayName: 'Restore packages'
   inputs:
@@ -27,10 +42,8 @@ steps:
     command: 'pack'
     packagesToPack: '**/*.csproj'
     configuration: '$(buildConfiguration)'
-    versioningScheme: 'byPrereleaseNumber'
-    majorVersion: '1'
-    minorVersion: '0'
-    patchVersion: '0'
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'packageVersion'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish to Azure Artifacts'
@@ -38,6 +51,3 @@ steps:
     command: 'push'
     publishVstsFeed: 'hello_world/pancake-feed'
     publishPackageMetadata: true
-
-- script: echo "Version increment logic goes here"
-  displayName: 'Print version to console'
