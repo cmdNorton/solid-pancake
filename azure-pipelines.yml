@@ -33,19 +33,10 @@ steps:
     command: 'restore'
     projects: '**/*.csproj'
 
-# Build for main branch (normal flow)
-- task: DotNetCoreCLI@2
-  displayName: 'Build project (main branch)'
-  condition: eq(variables['branchName'], 'main')
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-restore'
-
-# SonarCloud flow for feature branches - prepare, build, analyze
+# SonarCloud flow for main branch - prepare, build, analyze
 - task: SonarCloudPrepare@2
   displayName: 'Prepare SonarCloud analysis'
-  condition: eq(variables['branchName'], 'sonarqube')
+  condition: eq(variables['branchName'], 'main')
   inputs:
     SonarCloud: 'cmdNorton_solid-pancake'
     organization: 'cmdnorton'
@@ -56,7 +47,7 @@ steps:
 
 - task: DotNetCoreCLI@2
   displayName: 'Build project (with SonarCloud analysis)'
-  condition: eq(variables['branchName'], 'sonarqube')
+  condition: eq(variables['branchName'], 'main')
   inputs:
     command: 'build'
     projects: '**/*.csproj'
@@ -64,11 +55,11 @@ steps:
 
 - task: SonarCloudAnalyze@2
   displayName: 'Run SonarCloud analysis'
-  condition: eq(variables['branchName'], 'sonarqube')
+  condition: eq(variables['branchName'], 'main')
 
 - task: SonarCloudPublish@2
   displayName: 'Publish SonarCloud results'
-  condition: eq(variables['branchName'], 'sonarqube')
+  condition: eq(variables['branchName'], 'main')
   continueOnError: true
   inputs:
     pollingTimeoutSec: '300'
