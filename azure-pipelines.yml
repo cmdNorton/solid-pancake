@@ -47,7 +47,7 @@ steps:
   displayName: 'Prepare SonarCloud analysis'
   condition: eq(variables['branchName'], 'sonarqube')
   inputs:
-    SonarCloud: 'SonarCloud-Connection'
+    SonarCloud: 'cmdNorton_solid-pancake'
     organization: 'cmdnorton'
     scannerMode: 'MSBuild'
     projectKey: 'cmdNorton_solid-pancake'
