@@ -1,0 +1,14 @@
+/home/erez/master_git_folder/azure_devops_git/bin/Debug/net8.0/azure_devops_git
+/home/erez/master_git_folder/azure_devops_git/bin/Debug/net8.0/azure_devops_git.deps.json
+/home/erez/master_git_folder/azure_devops_git/bin/Debug/net8.0/azure_devops_git.runtimeconfig.json
+/home/erez/master_git_folder/azure_devops_git/bin/Debug/net8.0/azure_devops_git.dll
+/home/erez/master_git_folder/azure_devops_git/bin/Debug/net8.0/azure_devops_git.pdb
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/azure_devops_git.GeneratedMSBuildEditorConfig.editorconfig
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/azure_devops_git.AssemblyInfoInputs.cache
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/azure_devops_git.AssemblyInfo.cs
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/azure_devops_git.csproj.CoreCompileInputs.cache
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/azure_devops_git.dll
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/refint/azure_devops_git.dll
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/azure_devops_git.pdb
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/azure_devops_git.genruntimeconfig.cache
+/home/erez/master_git_folder/azure_devops_git/obj/Debug/net8.0/ref/azure_devops_git.dll
