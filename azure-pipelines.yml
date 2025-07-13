@@ -98,7 +98,7 @@ steps:
   inputs:
     sendMailConditionConfig: 'Always'
     subject: 'Pipeline $(Build.DefinitionName) - Build $(Build.BuildNumber) - $(branchName) branch'
-    to: 'your-email@example.com'
+    to: 'ermr.erez@gmail.com'
     body: |
       Pipeline Status: $(Agent.JobStatus)
       Branch: $(branchName)
