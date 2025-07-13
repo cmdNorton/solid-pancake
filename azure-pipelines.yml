@@ -12,7 +12,7 @@ variables:
   patchVersion: $(Build.BuildNumber)
   packageVersion: '$(majorVersion).$(minorVersion).$(patchVersion)'
   branchName: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
-  
+
 steps:
 - script: |
     echo "=== VERSION INFORMATION ==="
@@ -45,7 +45,7 @@ steps:
   displayName: 'Prepare SonarCloud analysis'
   condition: eq(variables['branchName'], 'sonarqube')
   inputs:
-    SonarCloud: 'SonarCloud-Connection'
+    SonarCloud: 'cmdNorton_solid-pancake'
     organization: 'cmdnorton'
     scannerMode: 'MSBuild'
     projectKey: 'cmdNorton_solid-pancake'
